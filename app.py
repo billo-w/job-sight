@@ -54,7 +54,8 @@ def index():
     return render_template('index.html', jobs=jobs, insights=insights)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    debug_mode = os.getenv('FLASK_DEBUG', '0') == '1'
+    app.run(debug=debug_mode)
 
 def save_jobs(jobs):
     with engine.connect() as conn:
