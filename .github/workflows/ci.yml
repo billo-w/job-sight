@@ -23,10 +23,12 @@ jobs:
           pip install -r requirements.txt
       - name: Security scan (Bandit)
         run: bandit -r app.py
+      - name: Build image
+        run: docker build -t job-sight:test .
       - name: Scan Docker image
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: billo-w/job-sight:latest
+          image-ref: job-sight:test
       - name: Run tests with coverage
         run: |
           pytest --maxfail=1 --disable-warnings --cov=app --cov-report=xml
