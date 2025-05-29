@@ -47,4 +47,4 @@ jobs:
         run: terraform apply -auto-approve
         env:
           DIGITALOCEAN_TOKEN: ${{ secrets.DO_TOKEN }}
-          GITHUB_REPO: ${{ github.repository }}
+          TF_VAR_github_repo: ${{ github.repository }}

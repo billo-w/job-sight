@@ -1,4 +1,4 @@
 variable "do_token" {}
 variable "github_repo" {
-  default = "${var.github_repo_env}"
+  description = "GitHub repository in format user/repo; supplied via TF_VAR_github_repo"
 }
