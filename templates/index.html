@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Job Sight</title>
+</head>
+<body>
+    <h1>Job Search</h1>
+    <form method="post">
+        <input name="title" placeholder="Job title" required>
+        <input name="location" placeholder="Location" required>
+        <button type="submit">Search</button>
+    </form>
+
+    <h2>Results:</h2>
+    {% for job in jobs %}
+        <p><strong>{{ job.title }}</strong> in {{ job.location }} - {{ job.description }}</p>
+    {% endfor %}
+    {% if insights %}
+        <h2>AI Insights</h2>
+        <p><strong>Trend:</strong> {{ insights.trend }}</p>
+        <p><strong>Estimated Avg Salary:</strong> {{ insights.average_salary }}</p>
+    {% endif %}
+</body>
+</html>
