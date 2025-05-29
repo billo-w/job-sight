@@ -6,3 +6,4 @@ loguru
 pytest-cov
 psycopg2-binary
 sqlalchemy
+gunicorn
