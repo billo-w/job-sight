@@ -5,6 +5,9 @@ import requests
 from loguru import logger
 import json
 from sqlalchemy import create_engine, text
+from prometheus_client import Counter, generate_latest, CONTENT_TYPE_LATEST
+
+REQUEST_COUNT = Counter('app_request_count', 'Total HTTP requests', ['method','endpoint'])
 
 logger.add("app.log", rotation="1 MB", level="INFO", backtrace=True, diagnose=True)
 
@@ -19,6 +22,21 @@ ADZUNA_ID = os.getenv('ADZUNA_ID')
 ADZUNA_KEY = os.getenv('ADZUNA_KEY')
 FOUNDRY_ENDPOINT = os.getenv('FOUNDRY_ENDPOINT')
 FOUNDRY_KEY = os.getenv('FOUNDRY_KEY')
+
+@app.after_request
+def set_security_headers(response):
+    response.headers['Content-Security-Policy'] = "default-src 'self'"
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'DENY'
+    return response
+
+@app.before_request
+def before_request():
+    REQUEST_COUNT.labels(request.method, request.path).inc()
+
+@app.route('/metrics')
+def metrics():
+    return generate_latest(), 200, {'Content-Type': CONTENT_TYPE_LATEST}
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
