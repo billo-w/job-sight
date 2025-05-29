@@ -5,7 +5,7 @@ import requests
 from loguru import logger
 import json
 from sqlalchemy import create_engine, text
-from prometheus_client import Counter, generate_latest, CONTENT_TYPE_LATEST
+from prometheus_client import Counter, generate_latest, CONTENT_TYPE_LATEST, CollectorRegistry, push_to_gateway
 
 REQUEST_COUNT = Counter('app_request_count', 'Total HTTP requests', ['method','endpoint'])
 
@@ -103,3 +103,18 @@ def analyze_market(jobs):
     except requests.exceptions.RequestException as e:
         logger.error("Azure Foundry API call failed: {}", e)
         return { 'trend': 'N/A', 'average_salary': 'N/A' }
+    
+registry = CollectorRegistry()
+# register your counters/histograms here...
+
+# After each scrape or on a schedule:
+push_to_gateway(
+  gateway='<your-grafana-cloud-push-URL>',
+  job='job-sight-production',
+  registry=registry,
+  handler=lambda url, data: requests.post(
+    url,
+    data=data,
+    headers={'Authorization': f'Bearer {GRAFANA_API_KEY}'}
+  )
+)
