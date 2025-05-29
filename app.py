@@ -73,7 +73,7 @@ def fetch_jobs(keyword, location='gb'):
             'what': keyword,
             'results_per_page': 10,
         }
-        resp = requests.get(url, params=params)
+        resp = requests.get(url, params=params, timeout=5)
         resp.raise_for_status()
         data = resp.json()
         logger.info("Fetched %d jobs for '%s' in %s", len(data.get('results', [])), keyword, location)
