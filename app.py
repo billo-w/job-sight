@@ -4,12 +4,16 @@ import os
 import requests
 from loguru import logger
 import json
+from sqlalchemy import create_engine, text
 
 logger.add("app.log", rotation="1 MB", level="INFO", backtrace=True, diagnose=True)
 
 load_dotenv()
 
 app = Flask(__name__)
+
+DB_URL = os.getenv('DATABASE_URL', 'postgresql://dev:devpass@db:5432/jobsight')
+engine = create_engine(DB_URL)
 
 ADZUNA_ID = os.getenv('ADZUNA_ID')
 ADZUNA_KEY = os.getenv('ADZUNA_KEY')
@@ -33,6 +37,13 @@ def index():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+def save_jobs(jobs):
+    with engine.connect() as conn:
+        for job in jobs:
+            conn.execute(text(
+                "INSERT INTO jobs (title, company, location) VALUES (:title, :company, :location)"
+            ), **{ 'title': job.get('title'), 'company': job.get('company', ''), 'location': job.get('location', '') })
 
 def fetch_jobs(keyword, location='gb'):
     try:

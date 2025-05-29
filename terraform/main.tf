@@ -1,11 +1,36 @@
+terraform {
+  required_providers {
+    digitalocean = {
+      source  = "digitalocean/digitalocean"
+      version = "~> 2.0"
+    }
+  }
+
+  backend "local" {}
+}
+
 provider "digitalocean" {
   token = var.do_token
 }
 
-resource "digitalocean_droplet" "web" {
-  image  = "ubuntu-22-04-x64"
-  name   = "job-sight-droplet"
-  region = "lon1"
-  size   = "s-1vcpu-1gb"
-  ssh_keys = [var.ssh_fingerprint]
+resource "digitalocean_app" "web_app" {
+  spec {
+    name = "job-sight-app"
+    service {
+      name = "web"
+      github {
+        repo      = var.github_repo
+        branch    = "main"
+        deploy_on_push = true
+      }
+      dockerfile_path = "./Dockerfile"
+      http_port = 5000
+      instance_size_slug = "basic-xxs"
+      instance_count     = 1
+    }
+  }
+}
+
+output "app_url" {
+  value = digitalocean_app.web_app.live_url
 }

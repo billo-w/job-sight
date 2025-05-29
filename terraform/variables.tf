@@ -1,2 +1,4 @@
 variable "do_token" {}
-variable "ssh_fingerprint" {}
+variable "github_repo" {
+  description = "GitHub repo in format user/repo"
+}
