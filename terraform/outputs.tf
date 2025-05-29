@@ -1,3 +1,3 @@
-output "droplet_ip" {
-  value = digitalocean_droplet.web.ipv4_address
+output "app_url" {
+  value = digitalocean_app.web_app.live_url
 }
