@@ -16,10 +16,10 @@ resource "digitalocean_app" "web_app" {
     name = "job-sight-app"
     service {
       name = "web"
-      github {
-        repo           = var.github_repo        # GitHub repo in format user/repo
+      github {  
         branch         = "main"
         deploy_on_push = true
+        repo           = var.github_repo  
       }
       dockerfile_path = "./Dockerfile"
       http_port = 5000
