@@ -49,12 +49,16 @@ jobs:
           terraform_version: '1.5.0'
       - name: Terraform Init
         working-directory: terraform
-        run: terraform init
-      - name: Terraform Apply
+        run: terraform init -input=false -reconfigure
+      - name: Terraform Plan & Apply
         working-directory: terraform
-        run: terraform apply -auto-approve
+        run: |
+         terraform plan -out=tfplan
+         terraform apply -input=false -auto-approve tfplan
         env:
+          # DigitalOcean App token & repo (for App Platform spec)
           TF_VAR_do_token:       ${{ secrets.DO_TOKEN }}
           TF_VAR_github_repo:    ${{ secrets.GITHUB_REPO }}
-          TF_VAR_spaces_access_key: ${{ secrets.SPACES_ACCESS_KEY }}
-          TF_VAR_spaces_secret_key: ${{ secrets.SPACES_SECRET_KEY }}
+          # Spaces credentials for remote state
+          AWS_ACCESS_KEY_ID:     ${{ secrets.SPACES_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.SPACES_SECRET_KEY }}

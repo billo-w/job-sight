@@ -2,14 +2,14 @@ terraform {
   required_version = ">= 1.0"
 
   backend "s3" {
-    endpoint   = "nyc3.digitaloceanspaces.com"        # or your region endpoint
-    bucket     = "job-sight-terraform"               # the Spaces bucket you created
-    key        = "state/terraform.tfstate"           # path inside the bucket
-    region     = "us-east-1"                         # any valid AWS region (ignored by DO)
-    access_key = var.spaces_access_key
-    secret_key = var.spaces_secret_key
+    endpoint                    = "https://lon1.digitaloceanspaces.com" # Corrected: Generic DO Spaces endpoint for the region
+    bucket                      = "job-sight-terraform"
+    key                         = "terraform.tfstate"
+    region                      = "us-east-1" # Or try your specific DO region like 'lon1' if supported
     skip_region_validation      = true
     skip_credentials_validation = true
-    force_path_style            = true
+    use_path_style              = true
+    skip_requesting_account_id  = true
+    workspace_key_prefix        = ""
   }
 }

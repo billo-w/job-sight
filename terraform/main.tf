@@ -5,8 +5,6 @@ terraform {
       version = "~> 2.0"
     }
   }
-
-  backend "local" {}
 }
 
 provider "digitalocean" {
