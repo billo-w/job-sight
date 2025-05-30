@@ -8,8 +8,7 @@ terraform {
     region                      = "us-east-1" # Or try your specific DO region like 'lon1' if supported
     skip_region_validation      = true
     skip_credentials_validation = true
-    use_path_style              = true
-    skip_requesting_account_id  = true
+    force_path_style = true
     workspace_key_prefix        = ""
   }
 }
