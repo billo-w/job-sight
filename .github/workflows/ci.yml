@@ -40,25 +40,27 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build-and-test
-    if: github.ref == 'refs/heads/main'
+    env:
+      # DO App Platform vars
+      TF_VAR_do_token:       ${{ secrets.DO_TOKEN }}
+      TF_VAR_github_repo:    ${{ secrets.GITHUB_REPO }}
+      # Spaces remote‐state credentials
+      AWS_ACCESS_KEY_ID:     ${{ secrets.SPACES_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.SPACES_SECRET_KEY }}
     steps:
       - uses: actions/checkout@v3
+
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: '1.5.0'
+
       - name: Terraform Init
         working-directory: terraform
-        run: terraform init -input=false -reconfigure
+        run: terraform init -reconfigure
+
       - name: Terraform Plan & Apply
         working-directory: terraform
         run: |
-         terraform plan -out=tfplan
-         terraform apply -input=false -auto-approve tfplan
-        env:
-          # DigitalOcean App token & repo (for App Platform spec)
-          TF_VAR_do_token:       ${{ secrets.DO_TOKEN }}
-          TF_VAR_github_repo:    ${{ secrets.GITHUB_REPO }}
-          # Spaces credentials for remote state
-          AWS_ACCESS_KEY_ID:     ${{ secrets.SPACES_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.SPACES_SECRET_KEY }}
+          terraform plan -out=tfplan
+          terraform apply -auto-approve tfplan
