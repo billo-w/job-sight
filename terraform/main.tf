@@ -17,8 +17,8 @@ resource "digitalocean_app" "web_app" {
     service {
       name = "web"
       github {
-        repo      = var.github_repo
-        branch    = "main"
+        repo           = var.github_repo        # GitHub repo in format user/repo
+        branch         = "main"
         deploy_on_push = true
       }
       dockerfile_path = "./Dockerfile"
