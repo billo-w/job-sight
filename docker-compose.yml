@@ -1,42 +1,6 @@
-version: '3.8'
 services:
-  web:
-    build: .
-    ports:
-      - "5000:5000"
-    environment:
-      - ADZUNA_ID=${ADZUNA_ID}
-      - ADZUNA_KEY=${ADZUNA_KEY}
-      - FOUNDRY_ENDPOINT=${FOUNDRY_ENDPOINT}
-      - FOUNDRY_KEY=${FOUNDRY_KEY}
-    volumes:
-      - .:/app
-    depends_on:
-      - db
-  db:
-    image: postgres:15
-    environment:
-      POSTGRES_USER: dev
-      POSTGRES_PASSWORD: devpass
-      POSTGRES_DB: jobsight
-    ports:
-      - "5432:5432"
-  uptime-kuma:
-    image: louislam/uptime-kuma:1
-    container_name: uptime-kuma
-    restart: always
-    ports:
-      - "3001:3001"
-    volumes:
-      - ./uptime-kuma:/app/data
-  prometheus:
-    image: prom/prometheus
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    ports:
-      - "9090:9090"
-
-  grafana:
-    image: grafana/grafana
-    ports:
-      - "3000:3000"
+  api:
+    build:
+      context: .
+      tags:
+        - "registry.digitalocean.com/job-sight-app"
