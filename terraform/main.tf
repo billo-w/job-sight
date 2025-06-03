@@ -11,6 +11,7 @@ provider "digitalocean" {}
 
 resource "digitalocean_project" "project" {
   name        = "Job-Sight-Project"
+  resources   = [digitalocean_app.app.urn]
 }
 
  resource "digitalocean_container_registry" "app_registry" {
@@ -18,20 +19,29 @@ resource "digitalocean_project" "project" {
   subscription_tier_slug = "starter"
 }
 
-resource "digitalocean_app" "web_app" {
+
+
+resource "digitalocean_app" "app" {
   spec {
     name = "job-sight-app"
+    alert {
+      rule = "DEPLOYMENT_FAILED"
+    }
+
     service {
-      name = "web"
-      github {  
-        branch         = "main"
-        deploy_on_push = true
-        repo           = var.github_repo  
-      }
-      dockerfile_path = "./Dockerfile"
-      http_port = 5000
-      instance_size_slug = "basic-xxs"
+      name               = "job-container"
       instance_count     = 1
+      instance_size_slug = "apps-s-1vcpu-0.5gb"
+      http_port          = 5000
+
+      image {
+        registry_type = "DOCR"
+        repository    = "job-container"
+        tag           = "latest"
+        deploy_on_push {
+          enabled = true
+        }
+      }
     }
   }
 }
