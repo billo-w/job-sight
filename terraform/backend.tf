@@ -1,8 +1,6 @@
 terraform {
-  required_version = ">= 1.5.0"
-
-  backend "s3" {
-    endpoints = { s3 = "https://lon1.digitaloceanspaces.com" }
+ backend "s3" {
+    endpoint                    = "https://lon1.digitaloceanspaces.com"
     bucket                      = "job-sight-terraform"
     key                         = "terraform.tfstate"
     skip_credentials_validation = true
