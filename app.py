@@ -5,26 +5,32 @@ import requests
 from loguru import logger
 import json
 from sqlalchemy import create_engine, text
-from prometheus_client import Counter, generate_latest, CONTENT_TYPE_LATEST, CollectorRegistry, push_to_gateway
+from prometheus_client import Counter, CollectorRegistry, push_to_gateway
 
-registry = CollectorRegistry()
-JOB_SEARCH = Counter('job_search_total', 'Total job searches', registry=registry)
+ADZUNA_ID        = os.getenv('ADZUNA_ID')
+ADZUNA_KEY       = os.getenv('ADZUNA_KEY')
+FOUNDRY_ENDPOINT = os.getenv('FOUNDRY_ENDPOINT')
+FOUNDRY_KEY      = os.getenv('FOUNDRY_KEY')
+GRAFANA_PUSH_URL = os.getenv('GRAFANA_PUSHGATEWAY_URL')
+GRAFANA_API_KEY  = os.getenv('GRAFANA_API_KEY')
+
+DB_URL = os.getenv('DATABASE_URL', 'postgresql://dev:devpass@db:5432/jobsight')
+engine = create_engine(DB_URL)
 
 REQUEST_COUNT = Counter('app_request_count', 'Total HTTP requests', ['method','endpoint'])
 
 logger.add("app.log", rotation="1 MB", level="INFO", backtrace=True, diagnose=True)
 
+registry = CollectorRegistry()
+JOB_SEARCH_COUNTER = Counter(
+    'job_search_total',
+    'Total number of job searches performed',
+    registry=registry
+)
+
 load_dotenv()
 
 app = Flask(__name__)
-
-DB_URL = os.getenv('DATABASE_URL', 'postgresql://dev:devpass@db:5432/jobsight')
-engine = create_engine(DB_URL)
-
-ADZUNA_ID = os.getenv('ADZUNA_ID')
-ADZUNA_KEY = os.getenv('ADZUNA_KEY')
-FOUNDRY_ENDPOINT = os.getenv('FOUNDRY_ENDPOINT')
-FOUNDRY_KEY = os.getenv('FOUNDRY_KEY')
 
 @app.after_request
 def set_security_headers(response):
@@ -50,10 +56,19 @@ def index():
         location = request.form.get('location')
         logger.info("Received search request: title=%s, location=%s", title, location)
         jobs = fetch_jobs(title, location)
-        if jobs:
-            insights = analyze_market(jobs)
-        else:
-            insights = { 'trend': 'No data', 'average_salary': 'No data' }
+        insights = analyze_market(jobs)
+        JOB_SEARCH_COUNTER.inc()
+        push_to_gateway(
+            os.getenv('GRAFANA_PUSHGATEWAY_URL'),
+            job='job-sight-production',
+            registry=registry,
+            handler=lambda url, data: __import__('requests').post(
+                url,
+                data=data,
+                headers={'Authorization': f"Bearer {os.getenv('GRAFANA_API_KEY')}"}
+            )
+        )
+
     return render_template('index.html', jobs=jobs, insights=insights)
 
 if __name__ == '__main__':
@@ -106,16 +121,3 @@ def analyze_market(jobs):
     except requests.exceptions.RequestException as e:
         logger.error("Azure Foundry API call failed: {}", e)
         return { 'trend': 'N/A', 'average_salary': 'N/A' }
-    
-def record_search_event():
-    JOB_SEARCH.inc()
-    push_to_gateway(
-        os.getenv('GRAFANA_PUSHGATEWAY_URL'),
-        job='job-sight-production',
-        registry=registry,
-        handler=lambda url, data: __import__('requests').post(
-            url,
-            data=data,
-            headers={'Authorization': f"Bearer {os.getenv('GRAFANA_API_KEY')}"}
-        )
-    )

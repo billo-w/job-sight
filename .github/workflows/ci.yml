@@ -44,9 +44,16 @@ jobs:
       # DO App Platform vars
       TF_VAR_do_token:       ${{ secrets.DO_TOKEN }}
       TF_VAR_github_repo:    ${{ github.repository }}
-      # Spaces remote‐state credentials
+      TF_VAR_adzuna_id:      ${{ secrets.ADZUNA_ID }}
+      TF_VAR_adzuna_key:     ${{ secrets.ADZUNA_KEY }}
+      TF_VAR_foundry_endpoint: ${{ secrets.FOUNDRY_ENDPOINT }}
+      TF_VAR_foundry_key:      ${{ secrets.FOUNDRY_KEY }}
+      TF_VAR_grafana_push_url: ${{ secrets.GRAFANA_PUSHGATEWAY_URL }}
+      TF_VAR_grafana_api_key:  ${{ secrets.GRAFANA_API_KEY }}
+
       AWS_ACCESS_KEY_ID:     ${{ secrets.SPACES_ACCESS_KEY }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.SPACES_SECRET_KEY }}
+
     steps:
       - uses: actions/checkout@v3
 

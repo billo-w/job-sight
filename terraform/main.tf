@@ -44,6 +44,32 @@ resource "digitalocean_app" "app" {
           enabled = true
         }
       }
+      env {
+        key   = "ADZUNA_ID"
+        value = var.adzuna_id
+      }
+      env {
+        key   = "ADZUNA_KEY"
+        value = var.adzuna_key
+      }
+      env {
+        key   = "FOUNDRY_ENDPOINT"
+        value = var.foundry_endpoint
+      }
+      env {
+        key   = "FOUNDRY_KEY"
+        value = var.foundry_key
+      }
+
+      # Prometheus remote-write to Grafana Cloud
+      env {
+        key   = "GRAFANA_PUSHGATEWAY_URL"
+        value = var.grafana_push_url
+      }
+      env {
+        key   = "GRAFANA_API_KEY"
+        value = var.grafana_api_key
+      }
     }
   }
 }
