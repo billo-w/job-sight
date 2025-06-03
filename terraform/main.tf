@@ -7,7 +7,9 @@ terraform {
   }
 }
 
-provider "digitalocean" {}
+provider "digitalocean" {
+  token       = var.do_token
+}
 
 resource "digitalocean_project" "project" {
   name        = "Job-Sight-Project"
