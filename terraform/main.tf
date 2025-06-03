@@ -7,8 +7,15 @@ terraform {
   }
 }
 
-provider "digitalocean" {
-  token = var.do_token
+provider "digitalocean" {}
+
+resource "digitalocean_project" "project" {
+  name        = "Job-Sight-Project"
+}
+
+ resource "digitalocean_container_registry" "app_registry" {
+  name                   = "job-sight-app"
+  subscription_tier_slug = "starter"
 }
 
 resource "digitalocean_app" "web_app" {

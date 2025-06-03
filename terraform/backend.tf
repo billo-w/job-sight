@@ -1,14 +1,15 @@
 terraform {
-  required_version = ">= 1.0"
+  required_version = ">= 1.6.3"
 
   backend "s3" {
-    endpoint                    = "https://lon1.digitaloceanspaces.com" # Corrected: Generic DO Spaces endpoint for the region
+    endpoints = { s3 = "https://lon1.digitaloceanspaces.com" }
     bucket                      = "job-sight-terraform"
     key                         = "terraform.tfstate"
-    region                      = "us-east-1" # Or try your specific DO region like 'lon1' if supported
-    skip_region_validation      = true
     skip_credentials_validation = true
-    force_path_style = true
-    workspace_key_prefix        = ""
+    skip_requesting_account_id  = true
+    skip_metadata_api_check     = true
+    skip_region_validation      = true
+    skip_s3_checksum            = true
+    region                      = "us-east-1"
   }
 }
