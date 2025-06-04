@@ -7,5 +7,6 @@ pytest-cov
 psycopg2-binary
 sqlalchemy
 gunicorn
-prometheus-client
 bandit
+python-logtail-handler
+logging

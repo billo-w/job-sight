@@ -60,15 +60,9 @@ resource "digitalocean_app" "app" {
         key   = "FOUNDRY_KEY"
         value = var.foundry_key
       }
-
-      # Prometheus remote-write to Grafana Cloud
       env {
-        key   = "GRAFANA_PUSHGATEWAY_URL"
-        value = var.grafana_push_url
-      }
-      env {
-        key   = "GRAFANA_API_KEY"
-        value = var.grafana_api_key
+        key   = "LOGTAIL_SOURCE_TOKEN"
+        value = var.logtail_source_token
       }
     }
   }

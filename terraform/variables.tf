@@ -32,13 +32,9 @@ variable "foundry_key" {
   sensitive   = true
 }
 
-variable "grafana_push_url" {
-  description = "Grafana Cloud Pushgateway endpoint"
-  type        = string
-}
-
-variable "grafana_api_key" {
-  description = "Grafana Cloud API key (bearer token)"
+variable "logtail_source_token" {
+  description = "Logtail source token for logging"
   type        = string
   sensitive   = true
 }
+

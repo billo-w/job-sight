@@ -5,7 +5,8 @@ import requests
 from loguru import logger
 import json
 from sqlalchemy import create_engine, text
-from prometheus_client import Counter, CollectorRegistry, push_to_gateway
+from logtail import LogtailHandler
+import logging
 
 ADZUNA_ID        = os.getenv('ADZUNA_ID')
 ADZUNA_KEY       = os.getenv('ADZUNA_KEY')
@@ -17,20 +18,33 @@ GRAFANA_API_KEY  = os.getenv('GRAFANA_API_KEY')
 DB_URL = os.getenv('DATABASE_URL', 'postgresql://dev:devpass@db:5432/jobsight')
 engine = create_engine(DB_URL)
 
-REQUEST_COUNT = Counter('app_request_count', 'Total HTTP requests', ['method','endpoint'])
-
 logger.add("app.log", rotation="1 MB", level="INFO", backtrace=True, diagnose=True)
 
-registry = CollectorRegistry()
-JOB_SEARCH_COUNTER = Counter(
-    'job_search_total',
-    'Total number of job searches performed',
-    registry=registry
-)
-
+handler = LogtailHandler(source_token=os.getenv("LOGTAIL_SOURCE_TOKEN"))
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+logger.addHandler(handler)
 load_dotenv()
 
+logger.info("Flask app has started")
+
 app = Flask(__name__)
+
+@app.before_request
+def log_request():
+    logger.info(f"Incoming {request.method} request to {request.path} from {request.remote_addr}")
+
+# Log a sample route
+@app.route('/')
+def home():
+    logger.info("Home page accessed")
+    return "Hello, world!"
+
+# Log errors
+@app.errorhandler(500)
+def server_error(e):
+    logger.error(f"Internal Server Error: {str(e)}")
+    return "Something went wrong", 500
 
 @app.after_request
 def set_security_headers(response):
@@ -38,14 +52,6 @@ def set_security_headers(response):
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'DENY'
     return response
-
-@app.before_request
-def before_request():
-    REQUEST_COUNT.labels(request.method, request.path).inc()
-
-@app.route('/metrics')
-def metrics():
-    return generate_latest(), 200, {'Content-Type': CONTENT_TYPE_LATEST}
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -57,17 +63,7 @@ def index():
         logger.info("Received search request: title=%s, location=%s", title, location)
         jobs = fetch_jobs(title, location)
         insights = analyze_market(jobs)
-        JOB_SEARCH_COUNTER.inc()
-        push_to_gateway(
-            os.getenv('GRAFANA_PUSHGATEWAY_URL'),
-            job='job-sight-production',
-            registry=registry,
-            handler=lambda url, data: __import__('requests').post(
-                url,
-                data=data,
-                headers={'Authorization': f"Bearer {os.getenv('GRAFANA_API_KEY')}"}
-            )
-        )
+        
 
     return render_template('index.html', jobs=jobs, insights=insights)
 

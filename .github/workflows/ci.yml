@@ -50,6 +50,7 @@ jobs:
       TF_VAR_foundry_key:      ${{ secrets.FOUNDRY_KEY }}
       TF_VAR_grafana_push_url: ${{ secrets.GRAFANA_PUSHGATEWAY_URL }}
       TF_VAR_grafana_api_key:  ${{ secrets.GRAFANA_API_KEY }}
+      TF_VAR_logtail_source_token: ${{ secrets.LOGTAIL_SOURCE_TOKEN }}
 
       AWS_ACCESS_KEY_ID:     ${{ secrets.SPACES_ACCESS_KEY }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.SPACES_SECRET_KEY }}
