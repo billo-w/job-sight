@@ -111,9 +111,9 @@ def analyze_market(jobs):
         )
         resp.raise_for_status()
         insights = resp.json()
-        logger.info("Azure Foundry insights received: {}", insights)
+        logger.info("Azure Foundry insights received: %s", insights)
         return insights
    
     except requests.exceptions.RequestException as e:
-        logger.error("Azure Foundry API call failed: {}", e)
+        logger.error("Azure Foundry API call failed: %s", e)
         return { 'trend': 'N/A', 'average_salary': 'N/A' }
