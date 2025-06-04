@@ -257,4 +257,8 @@ def analyze_market(jobs):
 # Run App
 # -------------------------
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    # Default to localhost; override via FLASK_RUN_HOST/FLASK_RUN_PORT if needed.
+    host = os.getenv('FLASK_RUN_HOST', '127.0.0.1')
+    port = int(os.getenv('FLASK_RUN_PORT', 5000))
+    debug_mode = os.getenv('FLASK_DEBUG', '0') == '1'
+    app.run(host=host, port=port, debug=debug_mode)
