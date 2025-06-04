@@ -3,6 +3,9 @@ import os
 import pytest
 import json
 import requests
+from app import app, fetch_jobs, analyze_market
+
+os.environ['DATABASE_URL'] = 'sqlite:///:memory:'
 
 @pytest.fixture(autouse=True)
 def env_vars(monkeypatch):
