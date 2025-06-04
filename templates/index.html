@@ -4,17 +4,51 @@
     <title>Job Sight</title>
 </head>
 <body>
+    <nav>
+        {% if current_user.is_authenticated %}
+            <span>Logged in as {{ current_user.email }}</span>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">Login</a> |
+            <a href="{{ url_for('register') }}">Register</a>
+        {% endif %}
+    </nav>
+
     <h1>Job Search</h1>
-    <form method="post">
-        <input name="title" placeholder="Job title" required>
-        <input name="location" placeholder="Country code (e.g. gb)" required>
+    <form method="post" action="{{ url_for('index') }}">
+        <input name="title" placeholder="Job title (e.g. Software Engineer)" required>
+        <input name="location" placeholder="Location (e.g. London)" required>
+        <input name="country_code" placeholder="Country code (e.g. gb)" required maxlength="2">
         <button type="submit">Search</button>
     </form>
 
     <h2>Results:</h2>
     {% for job in jobs %}
-        <p><strong>{{ job.title }}</strong> in {{ job.location }} - {{ job.description }}</p>
+        <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+            <p>
+                <strong>{{ job.title }}</strong><br>
+                <em>{{ job.company.display_name if job.company else 'Unknown Company' }}</em><br>
+                {{ job.location.display_name if job.location else 'Unknown Location' }}
+            </p>
+            <p>{{ job.description | safe }}</p>
+
+            {% if current_user.is_authenticated %}
+                <!-- Hidden form to save this job -->
+                <form method="post" action="{{ url_for('save_job') }}">
+                    <input type="hidden" name="job_title" value="{{ job.title }}">
+                    <input type="hidden" name="job_company" value="{{ job.company.display_name if job.company else '' }}">
+                    <input type="hidden" name="job_location" value="{{ job.location.display_name if job.location else '' }}">
+                    <input type="hidden" name="job_description" value="{{ job.description }}">
+                    <button type="submit">Save this Job</button>
+                </form>
+            {% endif %}
+        </div>
+    {% else %}
+        {% if request.method == 'POST' %}
+            <p>No jobs found for that search.</p>
+        {% endif %}
     {% endfor %}
+
     {% if insights %}
         <h2>AI Insights</h2>
         <p><strong>Trend:</strong> {{ insights.trend }}</p>

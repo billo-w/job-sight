@@ -9,3 +9,6 @@ sqlalchemy
 gunicorn
 bandit
 logtail-python
+flask-login
+flask-sqlalchemy
+werkzeug
