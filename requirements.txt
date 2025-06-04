@@ -8,5 +8,5 @@ psycopg2-binary
 sqlalchemy
 gunicorn
 bandit
-python-logtail-handler
+logtail-python
 logging
