@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from dotenv import load_dotenv
 import os
+import click
 import requests
 from loguru import logger
 import json
@@ -64,6 +65,14 @@ class SavedJob(db.Model):
     description = db.Column(db.Text)
 
 # Create tables if they don't exist
+
+@app.cli.command("create-tables")
+def create_tables():
+    """Create all tables in the database."""
+    with app.app_context():
+        db.create_all()
+        print("✅ All tables created.")
+        
 if app.config.get('ENV') == 'development':
     with app.app_context():
         db.create_all()
