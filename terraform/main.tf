@@ -11,18 +11,6 @@ provider "digitalocean" {
   token       = var.do_token
 }
 
-resource "digitalocean_project" "project" {
-  name        = "Job-Sight-Project"
-  resources   = [digitalocean_app.app.urn]
-}
-
- resource "digitalocean_container_registry" "app_registry" {
-  name                   = "job-sight-app"
-  subscription_tier_slug = "starter"
-}
-
-
-
 resource "digitalocean_app" "app" {
   spec {
     name = "job-sight-app"
