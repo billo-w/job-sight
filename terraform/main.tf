@@ -21,8 +21,6 @@ resource "digitalocean_project" "project" {
   subscription_tier_slug = "starter"
 }
 
-
-
 resource "digitalocean_app" "app" {
   spec {
     name = "job-sight-app"
