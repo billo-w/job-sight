@@ -9,4 +9,3 @@ sqlalchemy
 gunicorn
 bandit
 logtail-python
-logging
