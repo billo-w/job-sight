@@ -25,11 +25,11 @@ jobs:
       - name: Security scan (Bandit)
         run: bandit -r app.py
       - name: Build image
-        run: docker build -t job-sight:test .
+        run: docker build -t job-sight:latest .
       - name: Scan Docker image
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: job-sight:test
+          image-ref: job-sight:latest
       - name: Run tests with coverage
         run: |
           pytest --maxfail=1 --disable-warnings --cov=app --cov-report=xml
@@ -45,8 +45,8 @@ jobs:
           password: ${{ secrets.DO_TOKEN }}
       - name: Push Docker image
         run: |
-          docker tag job-sight:test registry.digitalocean.com/job-sight-app/job-sight:test
-          docker push registry.digitalocean.com/job-sight-app/job-sight:test
+          docker tag job-sight:latest registry.digitalocean.com/job-sight-app/job-sight:latest
+          docker push registry.digitalocean.com/job-sight-app/job-sight:latest
 
   deploy:
     runs-on: ubuntu-latest
