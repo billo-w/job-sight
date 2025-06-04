@@ -42,6 +42,12 @@ resource "digitalocean_app" "app" {
           enabled = true
         }
       }
+      log_destination {
+        name = "logtail"
+        logtail {
+          token = var.logtail_source_token
+        }
+      }
       env {
         key   = "ADZUNA_ID"
         value = var.adzuna_id
@@ -61,6 +67,10 @@ resource "digitalocean_app" "app" {
       env {
         key   = "LOGTAIL_SOURCE_TOKEN"
         value = var.logtail_source_token
+      }
+      env {
+        key   = "DATABASE_URL"
+        value = var.existing_database_url
       }
     }
   }

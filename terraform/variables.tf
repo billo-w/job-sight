@@ -38,3 +38,7 @@ variable "logtail_source_token" {
   sensitive   = true
 }
 
+variable "existing_database_url" {
+  description = "Connection string for my already‐created Postgres cluster"
+  type        = string
+}

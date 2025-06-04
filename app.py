@@ -22,7 +22,7 @@ FOUNDRY_ENDPOINT = os.getenv('FOUNDRY_ENDPOINT')
 FOUNDRY_KEY      = os.getenv('FOUNDRY_KEY')
 # GRAFANA_PUSH_URL and GRAFANA_API_KEY removed entirely
 
-DB_URL = os.getenv('DATABASE_URL', 'postgresql://dev:devpass@db:5432/jobsight')
+DB_URL = os.getenv('DATABASE_URL')
 
 # Set up Flask and SQLAlchemy
 app = Flask(__name__)
@@ -64,8 +64,13 @@ class SavedJob(db.Model):
     description = db.Column(db.Text)
 
 # Create tables if they don't exist
-with app.app_context():
-    db.create_all()
+if app.config.get('ENV') == 'development':
+    with app.app_context():
+        db.create_all()
+        logger.info("Tables created in development mode")
+
+if DB_URL is None:
+    raise RuntimeError("DATABASE_URL must be set before starting the app")
 
 @login_manager.user_loader
 def load_user(user_id):
