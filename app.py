@@ -93,7 +93,7 @@ def fetch_jobs(keyword, location='gb'):
         logger.info("Fetched %d jobs for '%s' in %s", len(data.get('results', [])), keyword, location)
         return data.get('results', [])
     except requests.exceptions.RequestException as e:
-        logger.error("Adzuna API call failed: {}", e)
+        logger.error(f"Adzuna API call failed: {e}")
         return []
 
 def analyze_market(jobs):
