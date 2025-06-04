@@ -29,14 +29,14 @@ resource "digitalocean_app" "app" {
     }
 
     service {
-      name               = "job-sight:latest"
+      name               = "job-sight"
       instance_count     = 1
       instance_size_slug = "apps-s-1vcpu-0.5gb"
       http_port          = 5000
 
       image {
         registry_type = "DOCR"
-        repository    = "job-sight:latest"
+        repository    = "job-sight"
         tag           = "latest"
         deploy_on_push {
           enabled = true
