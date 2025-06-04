@@ -1,11 +1,15 @@
-from app import app, fetch_jobs, analyze_market
+# tests/test_app.py
+
 import os
+# ─── Force the app to use SQLite in memory ────────────────────────────────────
+os.environ['DATABASE_URL'] = 'sqlite:///:memory:'
+# ─────────────────────────────────────────────────────────────────────────────
+
 import pytest
 import json
 import requests
-from app import app, fetch_jobs, analyze_market
 
-os.environ['DATABASE_URL'] = 'sqlite:///:memory:'
+from app import app, fetch_jobs, analyze_market
 
 @pytest.fixture(autouse=True)
 def env_vars(monkeypatch):
@@ -14,7 +18,8 @@ def env_vars(monkeypatch):
 
 class DummyResponse:
     def raise_for_status(self): pass
-    def json(self): return {'results': [{'title': 'DevOps Engineer', 'location':'London'}]}
+    def json(self): 
+        return {'results': [{'title': 'DevOps Engineer', 'location':'London'}]}
 
 @pytest.fixture
 def mock_requests(monkeypatch):
@@ -36,7 +41,8 @@ def test_homepage():
 
 class DummyPostResponse:
     def raise_for_status(self): pass
-    def json(self): return {'trend': 'test trend', 'average_salary': '£100'}
+    def json(self): 
+        return {'trend': 'test trend', 'average_salary': '£100'}
 
 @pytest.fixture
 def mock_post(monkeypatch):
