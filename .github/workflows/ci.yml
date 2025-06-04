@@ -37,6 +37,16 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           files: coverage.xml
+      - name : Upload Docker image to DigitalOcean Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: registry.digitalocean.com
+          username: doctl
+          password: ${{ secrets.DO_TOKEN }}
+      - name: Push Docker image
+        run: |
+          docker tag job-sight:test registry.digitalocean.com/job-sight-app/job-sight:test
+          docker push registry.digitalocean.com/job-sight-app/job-sight:test
 
   deploy:
     runs-on: ubuntu-latest
