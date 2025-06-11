@@ -59,8 +59,6 @@ jobs:
       TF_VAR_adzuna_key:     ${{ secrets.ADZUNA_KEY }}
       TF_VAR_foundry_endpoint: ${{ secrets.FOUNDRY_ENDPOINT }}
       TF_VAR_foundry_key:      ${{ secrets.FOUNDRY_KEY }}
-      TF_VAR_grafana_push_url: ${{ secrets.GRAFANA_PUSHGATEWAY_URL }}
-      TF_VAR_grafana_api_key:  ${{ secrets.GRAFANA_API_KEY }}
       TF_VAR_logtail_source_token: ${{ secrets.LOGTAIL_SOURCE_TOKEN }}
       TF_VAR_existing_database_url: ${{ secrets.DATABASE_URL }}
 
