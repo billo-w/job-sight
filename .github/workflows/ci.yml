@@ -77,6 +77,10 @@ jobs:
         working-directory: terraform
         run: terraform init -reconfigure
 
+      - name: Terraform Validate
+        working-directory: terraform
+        run: terraform validate
+
       - name: Terraform Plan & Apply
         working-directory: terraform
         run: |
